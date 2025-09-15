@@ -16,8 +16,8 @@ def build_note(note_text, note_name):
             print("Файл создан")
         file.write(note_text)
         print(f"Заметка {note_name} создана.")
-    except:
-        print("Что-то пошло не так. Попробуйте еще раз.")
+    except Exception as e:
+        print(f"Что-то пошло не так, ошибка {e}")
 
 
 # Напишите функцию, которая запрашивает название и текст заметки, а затем создает ее
@@ -37,62 +37,49 @@ def create_note():
             print("Название заметки создано.")
             note_text = input("Введите текст заметки: ")
             build_note(note_text, note_name)
-    except:
-        print("Что-то пошло не так. Попробуйте еще раз.")
+    except Exception as e:
+        print(f"Что-то пошло не так, ошибка {e}")
 
 
 # Напишите функцию, которая прочитает заметку и выведет ее текст
-def read_note():
-    # Запросите у пользователя название заметки, которую он хочет вывести на экран
+def read_note(note_name: str) -> None:
+    """Читает заметку по названию. Возвращает текст или None, если нет файла"""
     try:
-        note_name_read = input("Введите название заметки, которую хотите прочитать: ")
-        path = f"{note_name_read}.txt"
-        # Выведите заметку, если она существует. Если такой заметки нет, сообщите об этом пользователю
+        path = f"{note_name}.txt"
         if os.path.isfile(path):
-            with open(f"{note_name_read}.txt", "r") as file:
-                lines = file.read()
-            print("Текст заметки: ", lines)
+            with open(path, "r", encoding="utf-8") as file:
+                return file.read()
         else:
-            print("Такой заметки не существует. Введите другой запрос.")
-    except:
-        print("Что-то пошло не так. Попробуйте еще раз.")
+            None
+    except Exception as e:
+        print(f"Не смогли прочитать, ошибка: {e}")
 
 
-# Напишите функцию, которая редактирует заметку
-def edit_note():
-    # Запросите у пользователя название заметки, которую он хочет отредактировать
+def edit_note(note_name: str, new_text: str) -> bool:
+    """Редактирует заметку. Возвращает True, если успешно, иначе False."""
     try:
-        note_name_edit = input(
-            "Введите название заметки, которую хотите отредактировать: "
-        )
-        path = f"{note_name_edit}.txt"
-        # Проверьте, есть ли такая заметка. Если да, обновите ее содержание. Если нет, сообщите об этом пользователю.
+        path = f"{note_name}.txt"
         if os.path.isfile(path):
-            print("Заметка существует, вы можете ее отредактировать.")
-            note_text_new = open(f"{note_name_edit}.txt", "w+")
-            note_text_edit_new = input("Введите новый текст заметки: ")
-            note_text_new.write(note_text_edit_new)
-            print(f"Заметка {note_name_edit} обновлена.")
+            with open(path, 'w', encoding="utf-8") as file:
+                file.write(new_text)
+            return True
         else:
-            print("Такой заметки не существует. Введите другой запрос.")
-    except:
-        print("Что-то пошло не так. Попробуйте еще раз.")
+            return False
+    except Exception:
+        return False
 
 
-# Напишите функцию, которая удаляет заметку
-def delete_note():
-    # Запросите у пользователя название заметки, которую он хочет удалить
+def delete_note(note_name: str) -> bool:
+    """Удаляет заметку. Возвращает True, если удалена, иначе False."""
     try:
-        note_name_delete = input("Введите название заметки, которую хотите удалить: ")
-        path = f"{note_name_delete}.txt"
-        # Проверьте, есть ли такая заметка. Если да, удалите ее. Если нет, сообщите об этом пользователю.
+        path = f"{note_name}.txt"
         if os.path.isfile(path):
-            os.remove(f"{note_name_delete}.txt")
-            print("Заметка удалена!")
+            os.remove(path)
+            return True
         else:
-            print("Такой заметки не существует. Введите другой запрос.")
-    except:
-        print("Что-то пошло не так. Попробуйте еще раз.")
+            return False
+    except Exception:
+        return False
 
 
 # Напишите функцию, которая выведет все заметки пользователя в порядке от самой короткой до самой длинной
@@ -104,8 +91,8 @@ def display_notes():
             "Это список всех заметок в порядке от самой короткой до самой длинной: \n",
             sorted_notes,
         )
-    except:
-        print("Что-то пошло не так. Попробуйте еще раз.")
+    except Exception as e:
+        print(f"Что-то пошло не так, ошибка {e}")
 
 
 # Напишите функцию, которая выведет все заметки пользователя в порядке от самой длинной до самой короткой
@@ -117,8 +104,8 @@ def display_sorted_notes():
             "\nЭто список заметок в порядке от самой длинной до самой короткой: \n",
             sorted_list,
         )
-    except:
-        print("Что-то пошло не так. Попробуйте еще раз.")
+    except Exception as e:
+        print(f"Что-то пошло не так, ошибка {e}")
 
 
 # Создайте функцию, которая управляет всеми операциями с заметками
