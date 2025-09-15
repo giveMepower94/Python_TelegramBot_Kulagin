@@ -1,6 +1,6 @@
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
-from app.note import build_note
+from note import build_note
 
 ASK_NAME, ASK_TEXT = range(2)
 
