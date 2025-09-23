@@ -5,8 +5,8 @@ import datetime
 
 calendar = Calendar()
 # Шаги для диалогов
-CREATE_NAME, CREATE_DATE, CREATE_TIME, CREATE_DETAILS = range(4)
-READ_ID, DELETE_ID, EDIT_ID, EDIT_FIELD, EDIT_VALUE = range(4, 9)
+CHOOSING, CREATE_NAME, CREATE_DATE, CREATE_TIME, CREATE_DETAILS = range(5)
+READ_ID, DELETE_ID, EDIT_ID, EDIT_FIELD, EDIT_VALUE = range(5, 10)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -15,12 +15,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Пожалуйста, выберите действие:\n\n"
         "1️⃣ Создать событие\n"
         "2️⃣ Читать событие\n"
-        "3️⃣ Редактировать событие\n"
-        "4️⃣ Удалить событие\n"
-        "5️⃣ Список событий за сегодня\n\n"
+        "3️⃣ Удалить событие\n"
+        "4️⃣ Список событий за сегодня\n"
+        "5️⃣ Редактирование события\n"
         "Напишите цифру действия в ответ на это сообщение."
     )
     await update.message.reply_text(menu_text)
+    return CHOOSING
 
 
 async def handle_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
