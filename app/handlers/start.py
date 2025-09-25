@@ -46,14 +46,14 @@ async def handle_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(f"📋 События на сегодня:\n\n{text}")
         else:
             await update.message.reply_text("Сегодня нет событий")
-        return ConversationHandler.END
+        return await start(update, context)
     elif choice == "5":
         await update.message.reply_text("Введите ID события для редактирования:")
         return EDIT_ID
 
     else:
         await update.message.reply_text("❌ Неверный выбор. Попробуйте снова.")
-        return ConversationHandler.END
+        return await start(update, context)
 
 
 # === Создание события ===
@@ -95,7 +95,7 @@ async def get_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data["details"]
     )
     await update.message.reply_text(f"✅ Событие создано с ID {event_id}!")
-    return ConversationHandler.END
+    return await start(update, context)
 
 
 # === Чтение события ===
@@ -109,7 +109,7 @@ async def read_event_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
             await update.message.reply_text("❌ Событие с таким ID не найдено.")
     except ValueError:
         await update.message.reply_text("❌ Введите число (ID события).")
-    return ConversationHandler.END
+    return await start(update, context)
 
 
 # === Удаление события ===
@@ -123,7 +123,7 @@ async def delete_event_handler(update: Update, context: ContextTypes.DEFAULT_TYP
             await update.message.reply_text("❌ Событие с таким ID не найдено.")
     except ValueError:
         await update.message.reply_text("❌ Введите число (ID события).")
-    return ConversationHandler.END
+    return await start(update, context)
 
 
 # === Редактирование события ===
@@ -138,7 +138,7 @@ async def edit_event_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return EDIT_FIELD
     except ValueError:
         await update.message.reply_text("❌ Введите число (ID события).")
-        return ConversationHandler.END
+        return await start(update, context)
 
 
 async def edit_event_field(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -167,4 +167,4 @@ async def edit_event_value(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"✅ Событие {event_id} обновлено (поле {field}).")
     else:
         await update.message.reply_text("❌ Событие не найдено.")
-    return ConversationHandler.END
+    return await start(update, context)
