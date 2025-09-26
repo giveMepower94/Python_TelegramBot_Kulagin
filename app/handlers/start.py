@@ -1,9 +1,9 @@
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
-from app.calendar_bot import Calendar
+from app.calendar_bot import CalendarDB
 import datetime
 
-calendar = Calendar()
+calendar = CalendarDB()
 # Шаги для диалогов
 CHOOSING, CREATE_NAME, CREATE_DATE, CREATE_TIME, CREATE_DETAILS = range(5)
 READ_ID, DELETE_ID, EDIT_ID, EDIT_FIELD, EDIT_VALUE = range(5, 10)
