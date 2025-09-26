@@ -76,5 +76,5 @@ class CalendarDB:
         rows = self.cursor.fetchall()
         return [
             {"id": r[0], "name": r[1], "date": r[2], "time": r[3], "details": r[4]}
-        for r in rows
+            for r in rows
         ]
