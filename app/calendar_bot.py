@@ -29,29 +29,30 @@ class CalendarDB:
                 name TEXT NOT NULL,
                 date TEXT NOT NULL,
                 time TEXT NOT NULL,
-                details TEXT
+                details TEXT,
+                user_id BIGINT NOT NULL
             )
         """)
         self.conn.commit()
 
-    def create_event(self, name, date, time, details):
+    def create_event(self, name, date, time, details, user_id):
         self.cursor.execute(
-            "INSERT INTO events (name, date, time, details) VALUES (%s, %s, %s, %s) RETURNING id",
-            (name, date, time, details)
+            "INSERT INTO events (name, date, time, details, user_id) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+            (name, date, time, details, user_id)
         )
         event_id = self.cursor.fetchone()[0]
         self.conn.commit()
         return event_id
 
-    def read_event(self, event_id):
+    def read_event(self, event_id, user_id):
         self.cursor.execute(
-            "SELECT * FROM events WHERE id = %s",
-            (event_id,)
+            "SELECT * FROM events WHERE id = %s and user_id = %s",
+            (event_id, user_id)
         )
         return self.cursor.fetchone()
 
-    def edit_event(self, event_id, name=None, date=None, time=None, details=None):
-        event = self.read_event(event_id)
+    def edit_event(self, event_id, user_id, name=None, date=None, time=None, details=None):
+        event = self.read_event(event_id, user_id)
         if not event:
             return False
         name = name or event[1]
@@ -60,21 +61,21 @@ class CalendarDB:
         details = details or event[4]
 
         self.cursor.execute(
-            "UPDATE events SET name=%s, date=%s, time=%s, details=%s WHERE id=%s",
-            (name, date, time, details, event_id)
+            "UPDATE events SET name=%s, date=%s, time=%s, details=%s WHERE id=%s and user_id = %s",
+            (name, date, time, details, event_id, user_id)
         )
         self.conn.commit()
         return True
 
-    def delete_event(self, event_id):
-        self.cursor.execute("DELETE FROM events WHERE id=%s", (event_id,))
+    def delete_event(self, event_id, user_id):
+        self.cursor.execute("DELETE FROM events WHERE id=%s and user_id = %s", (event_id, user_id))
         self.conn.commit()
         return self.cursor.rowcount > 0
 
-    def get_list_event(self, date):
-        self.cursor.execute("SELECT * FROM events WHERE date=%s", (date,))
+    def get_list_event(self, date, user_id):
+        self.cursor.execute("SELECT * FROM events WHERE date=%s and user_id = %s", (date, user_id))
         rows = self.cursor.fetchall()
         return [
-            {"id": r[0], "name": r[1], "date": r[2], "time": r[3], "details": r[4]}
+            {"id": r[0], "name": r[1], "date": r[2], "time": r[3], "details": r[4], "user_id": r[5]}
             for r in rows
         ]

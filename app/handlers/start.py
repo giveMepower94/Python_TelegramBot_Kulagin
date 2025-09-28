@@ -38,7 +38,8 @@ async def handle_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Введите ID события для удаления:")
         return DELETE_ID
     elif choice == "4":
-        events = calendar.get_list_event(datetime.date.today().isoformat())
+        user_id = update.effective_user.id
+        events = calendar.get_list_event(datetime.date.today().isoformat(), user_id)
         if events:
             text = "\n\n".join(
                 [f"{e['id']}: {e['name']} {e['date']} {e['time']} - {e['details']}" for e in events]
@@ -87,14 +88,16 @@ async def get_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def get_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['details'] = update.message.text
+    user_id = update.effective_user.id
 
     event_id = calendar.create_event(
         context.user_data["name"],
         context.user_data["date"],
         context.user_data["time"],
-        context.user_data["details"]
+        context.user_data["details"],
+        user_id
     )
-    await update.message.reply_text(f"✅ Событие создано с ID {event_id}!")
+    await update.message.reply_text(f"✅ Событие создано с ID {event_id} TG_ID {user_id}!")
     return await start(update, context)
 
 
@@ -102,7 +105,8 @@ async def get_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def read_event_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         event_id = int(update.message.text)
-        event = calendar.read_event(event_id)
+        user_id = update.effective_user.id
+        event = calendar.read_event(event_id, user_id)
         if event:
             await update.message.reply_text(f"📖 Событие:\n\n{event}")
         else:
@@ -116,7 +120,8 @@ async def read_event_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def delete_event_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         event_id = int(update.message.text)
-        deleted = calendar.delete_event(event_id)
+        user_id = update.effective_user.id
+        deleted = calendar.delete_event(event_id, user_id)
         if deleted:
             await update.message.reply_text(f"🗑 Событие с ID {event_id} удалено.")
         else:
@@ -157,9 +162,11 @@ async def edit_event_value(update: Update, context: ContextTypes.DEFAULT_TYPE):
     event_id = context.user_data['event_id']
     field = context.user_data["edit_field"]
     value = update.message.text
+    user_id = update.effective_user.id
 
     success = calendar.edit_event(
         event_id,
+        user_id,
         **{field: value}
     )
 
