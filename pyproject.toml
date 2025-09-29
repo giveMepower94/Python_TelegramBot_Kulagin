@@ -1,0 +1,21 @@
+[project]
+name = "python-telegrambot-kulagin"
+version = "0.1.0"
+description = "Make telegram bot"
+authors = [
+    {name = "jGYQrw gga",email = "Kul.vova2009@yandex.ru"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = "3.11"
+dependencies = [
+    "pydantic-settings (>=2.10.1,<3.0.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+    "python-telegram-bot (>=22.3,<23.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
