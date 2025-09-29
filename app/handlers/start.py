@@ -1,12 +1,31 @@
 from telegram import Update
-from telegram.ext import ContextTypes, ConversationHandler
+from telegram.ext import ContextTypes
 from app.calendar_bot import CalendarDB
+from app.users import UsersDB
 import datetime
 
+users_db = UsersDB()
 calendar = CalendarDB()
+
 # Шаги для диалогов
 CHOOSING, CREATE_NAME, CREATE_DATE, CREATE_TIME, CREATE_DETAILS = range(5)
 READ_ID, DELETE_ID, EDIT_ID, EDIT_FIELD, EDIT_VALUE = range(5, 10)
+
+
+async def register(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    user_id = users_db.add_user(
+        tg_id=user.id,
+        username=user.username,
+        first_name=user.first_name,
+        last_name=user.last_name
+    )
+    if user_id:
+        await update.message.reply_text("✅ Вы успешно зарегистрированы!")
+    else:
+        await update.message.reply_text("ℹ️ Вы уже зарегистрированы.")
+
+    return await start(update, context)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -89,6 +108,13 @@ async def get_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def get_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['details'] = update.message.text
     user_id = update.effective_user.id
+
+    # Проверяем, зарегистрирован ли пользователь
+    if not users_db.user_exists(user_id):
+        await update.message.reply_text(
+            "❌ Сначала зарегистрируйтесь через команду /register"
+        )
+        return CHOOSING
 
     event_id = calendar.create_event(
         context.user_data["name"],

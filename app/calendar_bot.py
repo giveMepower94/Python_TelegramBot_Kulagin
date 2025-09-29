@@ -30,7 +30,8 @@ class CalendarDB:
                 date TEXT NOT NULL,
                 time TEXT NOT NULL,
                 details TEXT,
-                user_id BIGINT NOT NULL
+                user_id BIGINT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users(tg_id) ON DELETE CASCADE
             )
         """)
         self.conn.commit()

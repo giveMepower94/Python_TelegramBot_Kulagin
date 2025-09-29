@@ -2,7 +2,7 @@ import logging
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ConversationHandler
 from secret import API_TOKEN
 from app.handlers.start import (
-    start, handle_choice,
+    start, handle_choice, register,
     CHOOSING,
     CREATE_NAME, CREATE_DATE, CREATE_TIME, CREATE_DETAILS,
     get_name, get_date, get_time, get_details,
@@ -41,6 +41,7 @@ def main():
         fallbacks=[]
     )
     app.add_handler(conv_handler)
+    app.add_handler(CommandHandler("register", register))
     app.run_polling()
 
 
